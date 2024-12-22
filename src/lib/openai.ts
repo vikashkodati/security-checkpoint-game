@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -43,7 +44,7 @@ Keep it concise (3-4 sentences total).`
   }
 }
 
-export async function generateResponse(messages: Array<{ role: string; content: string }>) {
+export async function generateResponse(messages: ChatCompletionMessageParam[]) {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

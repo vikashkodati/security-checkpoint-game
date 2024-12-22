@@ -1,29 +1,23 @@
 import { NextResponse } from 'next/server'
-import { generateResponse } from '../../../src/lib/openai'
+import { generateResponse } from '@/src/lib/openai'
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json()
-    
+    const body = await req.json()
+    const messages = body.messages as ChatCompletionMessageParam[]
+
     if (!Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
-        { error: 'Invalid messages array' },
-        { status: 400 }
-      )
-    }
-
-    const systemMessage = messages.find(m => m.role === 'system')
-    if (!systemMessage) {
-      return NextResponse.json(
-        { error: 'Missing system message' },
+        { error: 'Messages array is required' },
         { status: 400 }
       )
     }
 
     const response = await generateResponse(messages)
-    return NextResponse.json({ message: response })
+    return NextResponse.json({ response })
   } catch (error) {
-    console.error('Chat error:', error)
+    console.error('Chat API error:', error)
     return NextResponse.json(
       { error: 'Failed to generate response' },
       { status: 500 }
