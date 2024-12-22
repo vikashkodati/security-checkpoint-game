@@ -1,5 +1,7 @@
 # 🧛‍♂️ The Vampire Checkpoint Game 🎮
 
+A special game created for Nandini! Play now at: [https://security-checkpoint-game-red.vercel.app/](https://security-checkpoint-game-red.vercel.app/) 🎮
+
 Hey there! Welcome to an exciting game where you get to be a security guard at a special checkpoint. Your job is super important - you need to figure out who's a regular person and who might be a vampire trying to sneak into the city! 
 
 ## 🎮 How to Play
