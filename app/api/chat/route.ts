@@ -3,13 +3,6 @@ import { generateResponse } from '@/src/lib/openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
 export async function POST(req: Request) {
-  if (typeof window === 'undefined' && !process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      { error: 'OpenAI API key is not configured' },
-      { status: 500 }
-    )
-  }
-
   try {
     const body = await req.json()
     const messages = body.messages as ChatCompletionMessageParam[]
@@ -26,7 +19,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Chat API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate response' },
+      { error: error instanceof Error ? error.message : 'Failed to generate response' },
       { status: 500 }
     )
   }

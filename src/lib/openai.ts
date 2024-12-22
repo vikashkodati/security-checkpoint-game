@@ -1,9 +1,8 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
-// Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
+  apiKey: process.env.OPENAI_API_KEY,
 })
 
 const SYSTEM_PROMPT = `You are simulating a character at a security checkpoint in Transylvania. 
@@ -14,10 +13,6 @@ If you're a vampire, be subtle about hiding your nature while leaving some clues
 Base your responses on the provided character profile.`
 
 export async function generatePersona() {
-  if (typeof window === 'undefined' && !process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not configured')
-  }
-
   const isVampire = Math.random() > 0.7
 
   const prompt = `Generate a brief character profile for a person at a Transylvania security checkpoint.
@@ -29,30 +24,29 @@ Include:
 - One subtle personality trait
 Keep it concise (3-4 sentences total).`
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.7,
-  })
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+    })
 
-  const profile = completion.choices[0].message.content || ''
-  
-  // Extract name from the first line or use default
-  const name = profile.split('\n')[0].replace('Name:', '').trim() || 'Unknown Traveler'
-  
-  return {
-    isVampire,
-    name,
-    description: profile,
-    profile // Keep full profile for conversation context
+    const profile = completion.choices[0].message.content || ''
+    const name = profile.split('\n')[0].replace('Name:', '').trim() || 'Unknown Traveler'
+    
+    return {
+      isVampire,
+      name,
+      description: profile,
+      profile
+    }
+  } catch (error) {
+    console.error('OpenAI API error:', error)
+    throw new Error('Failed to generate character. Please try again.')
   }
 }
 
 export async function generateResponse(messages: ChatCompletionMessageParam[]) {
-  if (typeof window === 'undefined' && !process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not configured')
-  }
-
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -66,6 +60,6 @@ export async function generateResponse(messages: ChatCompletionMessageParam[]) {
     return completion.choices[0].message.content || "I prefer not to answer that question."
   } catch (error) {
     console.error('OpenAI API error:', error)
-    throw error
+    throw new Error('Failed to generate response. Please try again.')
   }
 }
