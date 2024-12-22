@@ -1,13 +1,9 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY environment variable is not set')
-}
-
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
 })
 
 const SYSTEM_PROMPT = `You are simulating a character at a security checkpoint in Transylvania. 
@@ -18,7 +14,7 @@ If you're a vampire, be subtle about hiding your nature while leaving some clues
 Base your responses on the provided character profile.`
 
 export async function generatePersona() {
-  if (!process.env.OPENAI_API_KEY) {
+  if (typeof window === 'undefined' && !process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY is not configured')
   }
 
@@ -53,7 +49,7 @@ Keep it concise (3-4 sentences total).`
 }
 
 export async function generateResponse(messages: ChatCompletionMessageParam[]) {
-  if (!process.env.OPENAI_API_KEY) {
+  if (typeof window === 'undefined' && !process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY is not configured')
   }
 
