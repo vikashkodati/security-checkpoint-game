@@ -2,7 +2,18 @@ import { NextResponse } from 'next/server'
 import { generateResponse } from '@/src/lib/openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error('OPENAI_API_KEY environment variable is not set')
+}
+
 export async function POST(req: Request) {
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json(
+      { error: 'OpenAI API key is not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const body = await req.json()
     const messages = body.messages as ChatCompletionMessageParam[]
