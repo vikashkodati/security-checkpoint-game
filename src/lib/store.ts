@@ -84,7 +84,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           conversation: [
             ...state.currentPerson.conversation,
             { role: 'user', content: question },
-            { role: 'assistant', content: data.message }
+            { role: 'assistant', content: data.response }
           ]
         }
       })
